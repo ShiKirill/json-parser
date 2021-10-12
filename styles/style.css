@@ -1,0 +1,234 @@
+html {
+  font-size: 120%;
+}
+
+body {
+  height: 100vh;
+  background: #f3f0ec;
+  font-family: 'Quicksand', sans-serif;
+}
+
+#file-input {
+  display: none;
+}
+
+.wrapper {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  background: rgb(18 18 18 / 68%);
+}
+
+.wrapper-text {
+  color: #FFFFFF;
+  font-size: 2.3rem;
+}
+
+.wrapper.active {
+  display: flex;
+}
+
+.file-block {
+  height: 30vh;
+  min-height: 15rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.file-block-title {
+  text-align: center;
+  margin: 0;
+  margin-top: 1rem;
+  font-size: 3.33rem;
+  font-weight: bold;
+}
+
+.file-block-btn {
+  cursor: pointer;
+  margin-top: 2rem;
+  width: 40%;
+  max-width: 600px;
+  height: 5rem;
+  background: #0F7BFF;
+  border-color: transparent;
+  color: #FFFFFF;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 1.7rem;
+  line-height: 120%;
+  border-radius: 1.5625rem;
+}
+
+.file-block-btn.clear {
+  display: none;
+  background: #FFFFFF;
+  color: #0F7BFF;
+  border: 2px solid #0F7BFF;
+}
+
+.file-block-btn:hover {
+  background: #ff365b;
+  color: #001b3c;
+}
+
+.file-block-text {
+  font-size: 1.4rem;
+  font-weight: 400;
+  margin: 0;
+  margin-top: 0.7rem;
+}
+
+.show-result-block {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: auto;
+}
+
+.form-block {
+  border-radius: 1rem;
+  padding-bottom: 2rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  width: 40%;
+  max-width: 1200px;
+  min-width: 950px;
+  height: auto;
+  background: white;
+}
+
+.form-block-title {
+  text-align: center;
+  font-size: 2rem;
+}
+
+.field-block {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 2rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.field-block label {
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.field-block input {
+  width: 40%;
+  height: 2rem;
+  padding-left: 1rem;
+  padding-right: 1rem
+}
+
+textarea{
+  width: 60%;
+  height: 5rem;
+}
+
+input[type=file] {
+  width: auto !important;
+}
+
+input[type=checkbox] {
+  width: 1rem;
+  height: 1rem;
+}
+
+input[type=color]{
+  width: 6rem!important;
+  border: 1px solid black;
+}
+
+.form-input {
+  border-radius: 0.3rem;
+  border: 1px solid #303030;
+}
+
+.references-block {
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.references-block p {
+  margin: 0 0.5rem;
+}
+
+.references-block a {
+  color: #f100ea;
+  margin: 0 0.5rem;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.references-block a:hover {
+  color: #f19100;
+}
+
+.buttons-block {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.buttons-block button {
+  cursor: pointer;
+  background: transparent;
+  width: 30%;
+  height: 2.5rem;
+  font-weight: 600;
+  border: 2px solid #0F7BFF;
+  border-radius: 1.5625rem;
+  margin: 0 1rem;
+}
+
+.buttons-block button:hover {
+  border: 2px solid #ffab0f;
+}
+
+@media screen and (max-width: 1200px) {
+  html {
+    font-size: 90%;
+  }
+  .form-block {
+    min-width: auto;
+    width: 70%;
+  }
+  .field-block input {
+    width: 55%;
+  }
+  .file-block-btn {
+    width: 60%;
+  }
+}
+
+@media screen and (max-width: 750px) {
+  html {
+    font-size: 80%;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  html {
+    font-size: 65%;
+  }
+  .field-block input {
+    width: 70%;
+  }
+  .buttons-block button{
+    width: 40%;
+  }
+}
