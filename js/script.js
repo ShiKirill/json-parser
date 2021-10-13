@@ -80,7 +80,6 @@ const fillByContent = (mainBlock, fields) => {
     for (let key in inputAttributes) {
       if (inputAttributes.mask) {
         if (key == 'mask') {
-          console.log(inputAttributes[key]);
           input = setMask(input, inputAttributes[key]);
         } else if (key == 'type') {
           input.setAttribute(key, 'text');
