@@ -23,34 +23,39 @@ const setTitle = (str) => {
 };
 
 const setMask = (input, maskVal) => {
-  // function mask(event) {
-  //   const keyCode = event.keyCode;
-  //   const template = maskVal;
-  //   console.log('keyCode: ', keyCode);
-  //   console.log('template:', template);
-  // }
-  let tmpStr = '';
-  let iterator = 0;
-  for (let i =0; i< maskVal.length; i++){
-    if (!/[0-9]/.test(maskVal[i])){
-      if (i>0 && /[0-9]/.test(tmpStr[i])){
-        tmpStr += '{' + iterator + '}';
-        iterator = 0;
-      }
-      tmpStr += maskVal[i];
-    } else {
-      tmpStr += maskVal[i];
-      iterator++;
+
+  input.setAttribute('placeholder', maskVal.replace(/9/g, '_'));
+  function mask(event) {
+    const keyCode = event.keyCode;
+    const template = maskVal.replace(/9/g, '_');
+    const def = template.replace(/\D/g, "");
+
+    const val = this.value.replace(/\D/g, "");
+
+    let i = 0,
+      newValue = template.replace(/[_\d]/g, function (a) {
+        return i < val.length ? val.charAt(i++) || def.charAt(i) : a;
+      });
+    i = newValue.indexOf("_");
+    if (i != -1) {
+      newValue = newValue.slice(0, i);
+    }
+    let reg = template.substr(0, this.value.length).replace(/_+/g,
+      function (a) {
+        return "\\d{1," + a.length + "}";
+      }).replace(/[+()]/g, "\\$&");
+    reg = new RegExp("^" + reg + "$");
+    if (!reg.test(this.value) || this.value.length < 5 || keyCode > 47 && keyCode < 58) {
+      this.value = newValue;
+    }
+    if (event.type == "blur" && this.value.length < 5) {
+      this.value = "";
     }
   }
-  
-  
-  input.setAttribute('pattern', tmpStr);
-  input.setAttribute('placeholder', tmpStr);
-  input.addEventListener('input', ()=>{
-    console.log(input.value);
-    console.log(input.value.length);
-  });
+
+  input.addEventListener("input", mask);
+  input.addEventListener("focus", mask);
+  input.addEventListener("blur", mask);
 
   return input;
 };
@@ -73,39 +78,49 @@ const fillByContent = (mainBlock, fields) => {
     const inputAttributes = item.input;
     let input = document.createElement('input');
     for (let key in inputAttributes) {
-      if (key == 'mask') {
-
-        input = setMask(input, inputAttributes[key]);
-      } else if (key == 'filetype') {
-        let tempStr = '';
-        inputAttributes[key].forEach((item, index )=> {
-          if (index == 0){
-            tempStr = '.' + item;
-          } else {
-            tempStr = tempStr + ', .' +  item; 
-          }
-        });
-        input.setAttribute('accept', tempStr);
+      if (inputAttributes.mask) {
+        if (key == 'mask') {
+          console.log(inputAttributes[key]);
+          input = setMask(input, inputAttributes[key]);
+        } else if (key == 'type') {
+          input.setAttribute(key, 'text');
+        } else {
+          input.setAttribute(key, inputAttributes[key]);
+        }
       } else {
-        if (inputAttributes[key] !== 'false') {
-          if (inputAttributes[key] == 'textarea') {
-            input = document.createElement('textarea');
-          } else {
-            if (key == 'colors' || key == 'technologies') {
-              input.setAttribute('list', key);
-              dataList.setAttribute('id', key);
-              inputAttributes[key].forEach(item => {
-                const option = document.createElement('option');
-                option.innerText = item;
-                dataList.appendChild(option);
-              });
-              tempField = dataList;
+        if (key == 'filetype') {
+          let tempStr = '';
+          inputAttributes[key].forEach((item, index) => {
+            if (index == 0) {
+              tempStr = '.' + item;
             } else {
-              input.setAttribute(key, inputAttributes[key]);
+              tempStr = tempStr + ', .' + item;
+            }
+          });
+          input.setAttribute('accept', tempStr);
+        } else {
+          if (inputAttributes[key] !== 'false') {
+            if (inputAttributes[key] == 'textarea') {
+              input = document.createElement('textarea');
+            } else {
+              if (key == 'colors' || key == 'technologies') {
+                input.setAttribute('list', key);
+                dataList.setAttribute('id', key);
+                inputAttributes[key].forEach(item => {
+                  const option = document.createElement('option');
+                  option.innerText = item;
+                  dataList.appendChild(option);
+                });
+                tempField = dataList;
+              } else {
+                input.setAttribute(key, inputAttributes[key]);
+              }
             }
           }
         }
       }
+
+
 
     }
     input.setAttribute('id', 'field' + i);
