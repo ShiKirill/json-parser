@@ -1,3 +1,4 @@
+
 const fileInput = document.getElementById('file-input');
 const showFileWindow = document.querySelector('.open');
 const fileBlockText = document.querySelector('.file-block-text');
@@ -9,6 +10,7 @@ const wrapper = document.querySelector('.wrapper');
 let enterTarget;
 
 const showResultBlock = document.querySelector('.show-result-block');
+const modalBtn = document.querySelector('.btn-primary');
 
 showFileWindow.addEventListener('click', () => {
   fileInput.click();
@@ -88,7 +90,7 @@ const setDatalist = (input) => {
         const usedOptions = optionPrefix.split(separator).map(value => value.trim());
 
         for (const optionsValue of optionValues) {
-          if (usedOptions.indexOf(optionsValue) < 0) { 
+          if (usedOptions.indexOf(optionsValue) < 0) {
             const option = document.createElement("option");
             option.value = optionPrefix + optionsValue;
             list.append(option);
@@ -150,7 +152,7 @@ const fillByContent = (mainBlock, fields) => {
                   dataList.appendChild(option);
                 });
                 tempField = dataList;
-                if (key == 'technologies'){
+                if (key == 'technologies') {
                   tmp = true;
                 }
               } else {
@@ -191,7 +193,6 @@ const addReferences = (mainBlock, references) => {
   let hasCheckbox = false;
 
   references.forEach(item => {
-    console.log(references);
     for (let key in item) {
 
       if (key == 'input') {
@@ -211,7 +212,7 @@ const addReferences = (mainBlock, references) => {
       } else {
         if (key == 'text without ref') {
           let text;
-          if (!hasCheckbox){
+          if (!hasCheckbox) {
             text = document.createElement('p');
             text.innerText = item[key];
           } else {
@@ -219,16 +220,36 @@ const addReferences = (mainBlock, references) => {
             text.setAttribute('for', 'references')
             text.innerText = item[key];
           }
-          
+
           referencesBlock.appendChild(text);
         } else if (key == 'text' || key == 'ref') {
           const link = document.createElement('a');
           if (key == 'text') {
-              link.innerText = item[key];
-              temp = link;
+            link.innerText = item[key];
+            temp = link;
           } else {
             temp.setAttribute('href', item[key]);
           }
+          temp.addEventListener('click', (e) => {
+            e.preventDefault();
+            fetch('../json/' + e.target.getAttribute('href') + '.js').then(response => {
+              if (!response.ok) {
+                console.log(223);
+                throw new Error(`is not ok: ` + response.status);
+              }
+              if (response.status !== 200) {
+                throw new Error('status is not 200');
+              }
+              return response.json();
+            }).then(response => {
+              json = response;
+              showResultBlock.innerHTML = '';
+              createForm(json);
+            }).catch(err => {
+              modalBtn.click();
+              console.warn(err);
+            });
+          });
           referencesBlock.appendChild(temp);
         }
       }
@@ -290,7 +311,7 @@ const createForm = (json) => {
 }
 
 const fileToJson = (file) => {
-  console.log(file);
+
   const reader = new FileReader();
   reader.onload = (function (file) {
     return (e) => {
