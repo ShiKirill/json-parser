@@ -234,7 +234,6 @@ const addReferences = (mainBlock, references) => {
             e.preventDefault();
             fetch('../json/' + e.target.getAttribute('href') + '.js').then(response => {
               if (!response.ok) {
-                console.log(223);
                 throw new Error(`is not ok: ` + response.status);
               }
               if (response.status !== 200) {
