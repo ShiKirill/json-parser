@@ -60,6 +60,45 @@ const setMask = (input, maskVal) => {
   return input;
 };
 
+const setDatalist = (input) => {
+  const separator = ',';
+  const list = input.parentNode.querySelector('datalist');
+
+  if (input.multiple == 'true') {
+    if (list instanceof HTMLDataListElement) {
+      const optionsValues = Array.from(list.options).map(opt => opt.value);
+      let valueCount = input.value.split(separator).length;
+
+      input.addEventListener("input", () => {
+        const currentValueCount = input.value.split(separator).length;
+
+        if (valueCount !== currentValueCount) {
+          const lsIndex = input.value.lastIndexOf(separator);
+          const str = lsIndex !== -1 ? input.value.substr(0, lsIndex) + separator : "";
+          filldatalist(list, optionsValues, str);
+          valueCount = currentValueCount;
+        }
+      });
+    }
+
+    function filldatalist(list, optionValues, optionPrefix) {
+      if (list && optionValues.length > 0) {
+        list.innerHTML = "";
+
+        const usedOptions = optionPrefix.split(separator).map(value => value.trim());
+
+        for (const optionsValue of optionValues) {
+          if (usedOptions.indexOf(optionsValue) < 0) { 
+            const option = document.createElement("option");
+            option.value = optionPrefix + optionsValue;
+            list.append(option);
+          }
+        }
+      }
+    }
+  }
+}
+
 const fillByContent = (mainBlock, fields) => {
   let i = 0;
   fields.forEach(item => {
@@ -73,7 +112,7 @@ const fillByContent = (mainBlock, fields) => {
       fieldBlock.appendChild(label);
     }
 
-
+    let tmp = false;
     const dataList = document.createElement('datalist');
     const inputAttributes = item.input;
     let input = document.createElement('input');
@@ -107,10 +146,13 @@ const fillByContent = (mainBlock, fields) => {
                 dataList.setAttribute('id', key);
                 inputAttributes[key].forEach(item => {
                   const option = document.createElement('option');
-                  option.innerText = item;
+                  option.setAttribute('value', item);
                   dataList.appendChild(option);
                 });
                 tempField = dataList;
+                if (key == 'technologies'){
+                  tmp = true;
+                }
               } else {
                 input.setAttribute(key, inputAttributes[key]);
               }
@@ -131,7 +173,11 @@ const fillByContent = (mainBlock, fields) => {
     fieldBlock.appendChild(input);
     if (dataList.innerHTML) {
       fieldBlock.appendChild(dataList);
+      if (tmp) {
+        setDatalist(input);
+      }
     }
+
     mainBlock.appendChild(fieldBlock);
     i++;
   });
@@ -142,12 +188,16 @@ const addReferences = (mainBlock, references) => {
   const referencesBlock = document.createElement('div');
   referencesBlock.classList.add('references-block');
   let temp;
+  let hasCheckbox = false;
 
   references.forEach(item => {
+    console.log(references);
     for (let key in item) {
 
       if (key == 'input') {
+        hasCheckbox = true;
         const elem = document.createElement(key);
+        elem.setAttribute('id', 'references');
         for (let value in item[key]) {
           if (value == 'checked') {
             if (item[key][value] == 'true') {
@@ -160,14 +210,22 @@ const addReferences = (mainBlock, references) => {
         referencesBlock.appendChild(elem);
       } else {
         if (key == 'text without ref') {
-          const text = document.createElement('p');
-          text.innerText = item[key];
+          let text;
+          if (!hasCheckbox){
+            text = document.createElement('p');
+            text.innerText = item[key];
+          } else {
+            text = document.createElement('label');
+            text.setAttribute('for', 'references')
+            text.innerText = item[key];
+          }
+          
           referencesBlock.appendChild(text);
         } else if (key == 'text' || key == 'ref') {
           const link = document.createElement('a');
           if (key == 'text') {
-            link.innerText = item[key];
-            temp = link;
+              link.innerText = item[key];
+              temp = link;
           } else {
             temp.setAttribute('href', item[key]);
           }
@@ -232,6 +290,7 @@ const createForm = (json) => {
 }
 
 const fileToJson = (file) => {
+  console.log(file);
   const reader = new FileReader();
   reader.onload = (function (file) {
     return (e) => {
@@ -254,7 +313,6 @@ fileInput.addEventListener('change', e => {
 
 
 
-
 const preventDefaults = (e) => {
   e.preventDefault();
   e.stopPropagation();
@@ -272,9 +330,7 @@ const wrapperRemoveStyle = (e) => {
 };
 const handleDrop = (e) => {
   fileToJson(e.dataTransfer.files[0]);
-}
-
-
+};
 
 ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
   body.addEventListener(eventName, preventDefaults, false);
@@ -304,10 +360,7 @@ const removeEventListeners = () => {
   });
 
   body.removeEventListener('drop', handleDrop, false);
-}
-
-
-
+};
 
 clearBtn.addEventListener('click', (e) => {
   e.preventDefault();
@@ -316,4 +369,4 @@ clearBtn.addEventListener('click', (e) => {
   fileBlockText.style.display = 'block';
   clearBtn.style.display = 'none';
   addEventListeners();
-})
+});

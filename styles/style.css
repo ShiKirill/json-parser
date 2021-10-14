@@ -163,6 +163,7 @@ input[type=color]{
   justify-content: center;
 }
 
+.references-block label,
 .references-block p {
   margin: 0 0.5rem;
 }
