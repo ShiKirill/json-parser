@@ -66,7 +66,9 @@ const setDatalist = (input) => {
   const separator = ',';
   const list = input.parentNode.querySelector('datalist');
 
-  if (input.multiple == 'true') {
+
+  if (input.getAttribute('multiple') == 'true') {
+
     if (list instanceof HTMLDataListElement) {
       const optionsValues = Array.from(list.options).map(opt => opt.value);
       let valueCount = input.value.split(separator).length;
@@ -92,7 +94,7 @@ const setDatalist = (input) => {
         for (const optionsValue of optionValues) {
           if (usedOptions.indexOf(optionsValue) < 0) {
             const option = document.createElement("option");
-            option.value = optionPrefix + optionsValue;
+            option.value = optionPrefix + ' ' + optionsValue;
             list.append(option);
           }
         }
